@@ -1,10 +1,9 @@
 
 #include "PassiveSocket.h"       // Include header for active socket object definition
 
-#define MAX_PACKET 4096 
+#define MAX_PACKET 4096
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     CPassiveSocket socket;
     CActiveSocket *pClient = NULL;
 
@@ -15,19 +14,16 @@ int main(int argc, char **argv)
 
     socket.Listen("127.0.0.1", 6789);
 
-    while (true)
-    {
-        if ((pClient = socket.Accept()) != NULL)
-        {
+    while (true) {
+        if ((pClient = socket.Accept()) != NULL) {
             //----------------------------------------------------------------------
             // Receive request from the client.
             //----------------------------------------------------------------------
-            if (pClient->Receive(MAX_PACKET))
-            {
+            if (pClient->Receive(MAX_PACKET)) {
                 //------------------------------------------------------------------
                 // Send response to client and close connection to the client.
                 //------------------------------------------------------------------
-                pClient->Send( pClient->GetData(), pClient->GetBytesReceived() );
+                pClient->Send(pClient->GetData(), pClient->GetBytesReceived());
                 pClient->Close();
             }
 

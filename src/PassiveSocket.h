@@ -42,6 +42,7 @@
  *----------------------------------------------------------------------------*/
 #ifndef __PASSIVESOCKET_H__
 #define __PASSIVESOCKET_H__
+
 #include "ActiveSocket.h"
 
 /// Provides a platform independent class to create a passive socket.
@@ -55,6 +56,7 @@
 class EXPORT CPassiveSocket : public CSimpleSocket {
 public:
     CPassiveSocket(CSocketType type = SocketTypeTcp);
+
     virtual ~CPassiveSocket() {
         Close();
     };
@@ -112,7 +114,7 @@ public:
     virtual int32 Send(const uint8 *pBuf, size_t bytesToSend);
 
 private:
-    struct ip_mreq  m_stMulticastRequest;   /// group address for multicast
+    struct ip_mreq m_stMulticastRequest;   /// group address for multicast
 
 };
 

@@ -50,27 +50,33 @@
 #include <errno.h>
 
 #if defined(_LINUX) || defined (_DARWIN)
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
 #include <netdb.h>
+
 #endif
 #ifdef _LINUX
+
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
 #include <linux/if.h>
 #include <sys/sendfile.h>
+
 #endif
 #ifdef _DARWIN
 #include <net/if.h>
 #endif
 #if defined(_LINUX) || defined (_DARWIN)
+
 #include <sys/time.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <fcntl.h>
+
 #endif
 
 #ifdef _WIN32
@@ -81,6 +87,7 @@
 #define IPTOS_LOWDELAY  0x10
 
 #endif
+
 #include "Host.h"
 #include "StatTimer.h"
 
@@ -102,16 +109,14 @@
 class EXPORT CSimpleSocket {
 public:
     /// Defines the three possible states for shuting down a socket.
-    typedef enum
-    {
+    typedef enum {
         Receives = SHUT_RD, ///< Shutdown passive socket.
         Sends = SHUT_WR,    ///< Shutdown active socket.
         Both = SHUT_RDWR    ///< Shutdown both active and passive sockets.
     } CShutdownMode;
 
     /// Defines the socket types defined by CSimpleSocket class.
-    typedef enum
-    {
+    typedef enum {
         SocketTypeInvalid,   ///< Invalid socket type.
         SocketTypeTcp,       ///< Defines socket as TCP socket.
         SocketTypeUdp,       ///< Defines socket as UDP socket.
@@ -121,8 +126,7 @@ public:
     } CSocketType;
 
     /// Defines all error codes handled by the CSimpleSocket class.
-    typedef enum
-    {
+    typedef enum {
         SocketError = -1,          ///< Generic socket error translates to error below.
         SocketSuccess = 0,         ///< No socket error.
         SocketInvalidSocket,       ///< Invalid socket handle.
@@ -146,13 +150,12 @@ public:
 
 public:
     CSimpleSocket(CSocketType type = SocketTypeTcp);
+
     CSimpleSocket(CSimpleSocket &socket);
 
-    virtual ~CSimpleSocket()
-    {
-        if (m_pBuffer != NULL)
-        {
-            delete [] m_pBuffer;
+    virtual ~CSimpleSocket() {
+        if (m_pBuffer != NULL) {
+            delete[] m_pBuffer;
             m_pBuffer = NULL;
         }
     };
@@ -182,7 +185,7 @@ public:
     /// Block until an event happens on the specified file descriptors.
     /// @return true if socket has data ready, or false if not ready or timed out.
     virtual bool Select(void) {
-        return Select(0,0);
+        return Select(0, 0);
     };
 
     /// Examine the socket descriptor sets currently owned by the instance of
@@ -209,6 +212,7 @@ public:
     /// Returns a human-readable description of the given error code
     /// or the last error code of a socket
     static const char *DescribeError(CSocketError err);
+
     inline const char *DescribeError() {
         return DescribeError(m_socketErrno);
     };
@@ -221,7 +225,7 @@ public:
     /// @return number of bytes actually received.
     /// @return of zero means the connection has been shutdown on the other side.
     /// @return of -1 means that an error has occurred.
-    virtual int32 Receive(int32 nMaxBytes = 1, uint8 * pBuffer = 0);
+    virtual int32 Receive(int32 nMaxBytes = 1, uint8 *pBuffer = 0);
 
     /// Attempts to send a block of data on an established connection.
     /// @param pBuf block of data to be sent.
@@ -273,7 +277,7 @@ public:
     /// pointer when finished.  This memory is managed internally by the CSocket
     /// class.
     /// @return pointer to data if valid, else returns NULL.
-    uint8 *GetData(void)  {
+    uint8 *GetData(void) {
         return m_pBuffer;
     };
 
@@ -318,14 +322,14 @@ public:
     /// call to CSimpleSocket::Open waits until it completes.
     /// @return the length of time in seconds
     int32 GetConnectTimeoutSec(void) {
-        return  m_stConnectTimeout.tv_sec;
+        return (int32) m_stConnectTimeout.tv_sec;
     };
 
     /// Gets the timeout value that specifies the maximum number of microseconds
     /// a call to CSimpleSocket::Open waits until it completes.
     /// @return the length of time in microseconds
     int32 GetConnectTimeoutUSec(void) {
-        return  m_stConnectTimeout.tv_usec;
+        return (int32) m_stConnectTimeout.tv_usec;
     };
 
     /// Sets the timeout value that specifies the maximum amount of time a call
@@ -338,8 +342,7 @@ public:
     /// @param nConnectTimeoutSec of timeout in seconds.
     /// @param nConnectTimeoutUsec of timeout in microseconds.
     /// @return true if socket connection timeout was successfully set.
-    void SetConnectTimeout(int32 nConnectTimeoutSec, int32 nConnectTimeoutUsec = 0)
-    {
+    void SetConnectTimeout(int32 nConnectTimeoutSec, int32 nConnectTimeoutUsec = 0) {
         m_stConnectTimeout.tv_sec = nConnectTimeoutSec;
         m_stConnectTimeout.tv_usec = nConnectTimeoutUsec;
     };
@@ -348,14 +351,14 @@ public:
     /// a call to CSimpleSocket::Receive waits until it completes.
     /// @return the length of time in seconds
     int32 GetReceiveTimeoutSec(void) {
-        return  m_stRecvTimeout.tv_sec;
+        return (int32) m_stRecvTimeout.tv_sec;
     };
 
     /// Gets the timeout value that specifies the maximum number of microseconds
     /// a call to CSimpleSocket::Receive waits until it completes.
     /// @return the length of time in microseconds
     int32 GetReceiveTimeoutUSec(void) {
-        return  m_stRecvTimeout.tv_usec;
+        return (int32) m_stRecvTimeout.tv_usec;
     };
 
     /// Sets the timeout value that specifies the maximum amount of time a call
@@ -391,14 +394,14 @@ public:
     /// a call to CSimpleSocket::Send waits until it completes.
     /// @return the length of time in seconds
     int32 GetSendTimeoutSec(void) {
-        return  m_stSendTimeout.tv_sec;
+        return (int32) m_stSendTimeout.tv_sec;
     };
 
     /// Gets the timeout value that specifies the maximum number of microseconds
     /// a call to CSimpleSocket::Send waits until it completes.
     /// @return the length of time in microseconds
     int32 GetSendTimeoutUSec(void) {
-        return  m_stSendTimeout.tv_usec;
+        return (int32) m_stSendTimeout.tv_usec;
     };
 
     /// Gets the timeout value that specifies the maximum amount of time a call
@@ -551,31 +554,31 @@ private:
     CSimpleSocket *operator=(CSimpleSocket &socket);
 
 protected:
-    SOCKET               m_socket;            /// socket handle
-    CSocketError         m_socketErrno;       /// number of last error
-    uint8               *m_pBuffer;           /// internal send/receive buffer
-    int32                m_nBufferSize;       /// size of internal send/receive buffer
-    int32                m_nSocketDomain;     /// socket type PF_INET, PF_INET6
-    CSocketType          m_nSocketType;       /// socket type - UDP, TCP or RAW
-    int32                m_nBytesReceived;    /// number of bytes received
-    int32                m_nBytesSent;        /// number of bytes sent
-    uint32               m_nFlags;            /// socket flags
-    bool                 m_bIsBlocking;       /// is socket blocking
-    bool                 m_bIsMulticast;      /// is the UDP socket multicast;
-    struct timeval       m_stConnectTimeout;  /// connection timeout
-    struct timeval       m_stRecvTimeout;     /// receive timeout
-    struct timeval       m_stSendTimeout;     /// send timeout
-    struct sockaddr_in   m_stServerSockaddr;  /// server address
-    struct sockaddr_in   m_stClientSockaddr;  /// client address
-    struct sockaddr_in   m_stMulticastGroup;  /// multicast group to bind to
-    struct linger        m_stLinger;          /// linger flag
-    CStatTimer           m_timer;             /// internal statistics.
+    SOCKET m_socket;            /// socket handle
+    CSocketError m_socketErrno;       /// number of last error
+    uint8 *m_pBuffer;           /// internal send/receive buffer
+    int32 m_nBufferSize;       /// size of internal send/receive buffer
+    int32 m_nSocketDomain;     /// socket type PF_INET, PF_INET6
+    CSocketType m_nSocketType;       /// socket type - UDP, TCP or RAW
+    int32 m_nBytesReceived;    /// number of bytes received
+    int32 m_nBytesSent;        /// number of bytes sent
+    uint32 m_nFlags;            /// socket flags
+    bool m_bIsBlocking;       /// is socket blocking
+    bool m_bIsMulticast;      /// is the UDP socket multicast;
+    struct timeval m_stConnectTimeout;  /// connection timeout
+    struct timeval m_stRecvTimeout;     /// receive timeout
+    struct timeval m_stSendTimeout;     /// send timeout
+    struct sockaddr_in m_stServerSockaddr;  /// server address
+    struct sockaddr_in m_stClientSockaddr;  /// client address
+    struct sockaddr_in m_stMulticastGroup;  /// multicast group to bind to
+    struct linger m_stLinger;          /// linger flag
+    CStatTimer m_timer;             /// internal statistics.
 #ifdef WIN32
     WSADATA              m_hWSAData;          /// Windows
 #endif
-    fd_set               m_writeFds;          /// write file descriptor set
-    fd_set               m_readFds;           /// read file descriptor set
-    fd_set               m_errorFds;          /// error file descriptor set
+    fd_set m_writeFds;          /// write file descriptor set
+    fd_set m_readFds;           /// read file descriptor set
+    fd_set m_errorFds;          /// error file descriptor set
 };
 
 
